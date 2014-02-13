@@ -1,4 +1,4 @@
-binary-browser
-==============
+bodec
+=====
 
 Binary ops using typed arrays
