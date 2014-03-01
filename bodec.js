@@ -1,46 +1,55 @@
 "use strict";
 /*global escape, unescape*/
 
-// This file must be served with UTF-8 encoding for the utf8 codec to work.
-module.exports = {
-  // Utility functions
-  isBinary: isBinary,
-  create: create,
-  join: join,
+var isNode = typeof process === 'object' && typeof process.versions === 'object' && process.versions.node;
 
-  // Binary input and output
-  copy: copy,
-  slice: slice,
+if (isNode) {
+  var nodeRequire = require; // Prevent mine.js from seeing this require
+  module.exports = nodeRequire('./bodec-node.js');
+}
+else {
 
-  // String input and output
-  toRaw: toRaw,
-  fromRaw: fromRaw,
-  toUnicode: toUnicode,
-  fromUnicode: fromUnicode,
-  toHex: toHex,
-  fromHex: fromHex,
-  toBase64: toBase64,
-  fromBase64: fromBase64,
+  // This file must be served with UTF-8 encoding for the utf8 codec to work.
+  module.exports = {
+    // Utility functions
+    isBinary: isBinary,
+    create: create,
+    join: join,
 
-  // Array input and output
-  toArray: toArray,
-  fromArray: fromArray,
+    // Binary input and output
+    copy: copy,
+    slice: slice,
 
-  // Raw <-> Hex-encoded codec
-  decodeHex: decodeHex,
-  encodeHex: encodeHex,
+    // String input and output
+    toRaw: toRaw,
+    fromRaw: fromRaw,
+    toUnicode: toUnicode,
+    fromUnicode: fromUnicode,
+    toHex: toHex,
+    fromHex: fromHex,
+    toBase64: toBase64,
+    fromBase64: fromBase64,
 
-  decodeBase64: decodeBase64,
-  encodeBase64: encodeBase64,
+    // Array input and output
+    toArray: toArray,
+    fromArray: fromArray,
 
-  // Unicode <-> Utf8-encoded-raw codec
-  encodeUtf8: encodeUtf8,
-  decodeUtf8: decodeUtf8,
+    // Raw <-> Hex-encoded codec
+    decodeHex: decodeHex,
+    encodeHex: encodeHex,
 
-  // Hex <-> Nibble codec
-  nibbleToCode: nibbleToCode,
-  codeToNibble: codeToNibble
-};
+    decodeBase64: decodeBase64,
+    encodeBase64: encodeBase64,
+
+    // Unicode <-> Utf8-encoded-raw codec
+    encodeUtf8: encodeUtf8,
+    decodeUtf8: decodeUtf8,
+
+    // Hex <-> Nibble codec
+    nibbleToCode: nibbleToCode,
+    codeToNibble: codeToNibble
+  };
+}
 
 function isBinary(value) {
   return value &&
