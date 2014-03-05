@@ -43,7 +43,7 @@ function slice(binary, start, end) {
 }
 
 function copy(source, binary, offset) {
-  return source.bopy(binary, offset);
+  return source.copy(binary, offset);
 }
 
 // Like slice, but encode as a hex string
