@@ -1,5 +1,10 @@
 {
   "name": "bodec",
   "version": "0.0.1",
-  "main": "bodec.js"
+  "main": "bodec.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/creationix/bodec.git"
+  },
+  "license": "MIT"
 }
