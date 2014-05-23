@@ -54,7 +54,7 @@ else {
 function isBinary(value) {
   return value &&
       typeof value === "object" &&
-      value.constructor.name === "Uint8Array";
+      value instanceof Uint8Array || value.constructor.name === "Uint8Array";
 }
 
 function create(length) {
