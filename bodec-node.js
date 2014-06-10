@@ -1,4 +1,5 @@
 module.exports = {
+  Binary: Buffer,
   // Utility functions
   isBinary: Buffer.isBuffer,
   create: Buffer,

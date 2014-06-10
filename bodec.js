@@ -16,6 +16,7 @@ else {
 
   // This file must be served with UTF-8 encoding for the utf8 codec to work.
   module.exports = {
+    Binary: Uint8Array,
     // Utility functions
     isBinary: isBinary,
     create: create,
