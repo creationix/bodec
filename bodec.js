@@ -1,14 +1,12 @@
 "use strict";
 /*global escape, unescape*/
 
-var isNode = typeof process === 'object' && typeof process.versions === 'object' && process.versions.node;
-if (isNode) {
-  try { require('buffer'); }
-  catch (err) { isNode = false; }
-}
+var isNode = typeof process === 'object' &&
+             typeof process.versions === 'object' &&
+             process.versions.node &&
+             process.type !== "renderer";
 
 if (isNode) {
-
   var nodeRequire = require; // Prevent mine.js from seeing this require
   module.exports = nodeRequire('./bodec-node.js');
 }
