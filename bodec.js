@@ -4,7 +4,7 @@
 var isNode = typeof process === 'object' &&
              typeof process.versions === 'object' &&
              process.versions.node &&
-             process.type !== "renderer";
+             process.__atom_type !== "renderer";
 
 if (isNode) {
   var nodeRequire = require; // Prevent mine.js from seeing this require
