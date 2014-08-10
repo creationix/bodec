@@ -7,12 +7,12 @@ var isNode = typeof process === 'object' &&
 
 if (isNode) {
   var nodeRequire = require; // Prevent mine.js from seeing this require
-  return nodeRequire('./bodec-node.js');
+  module.exports = nodeRequire('./bodec-node.js');
 }
 else {
 
   // This file must be served with UTF-8 encoding for the utf8 codec to work.
-  return {
+  module.exports = {
     Binary: Uint8Array,
     // Utility functions
     isBinary: isBinary,
