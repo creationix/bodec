@@ -1,8 +1,3 @@
-
-( // Module boilerplate to support cjs and browser globals.
-  (typeof module === "object" && typeof module.exports === "object" && function (m) { module.exports = m(); }) ||
-  (function (m) { window.bodec = m(); })
-)(function () {
 "use strict";
 
 var isNode = typeof process === 'object' &&
@@ -248,5 +243,3 @@ function fromArray(array, binary, offset) {
   }
   return binary;
 }
-
-});
