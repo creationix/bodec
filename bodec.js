@@ -1,5 +1,9 @@
+
+( // Module boilerplate to support cjs and browser globals.
+  (typeof module === "object" && typeof module.exports === "object" && function (m) { module.exports = m(); }) ||
+  (function (m) { window.bodec = m(); })
+)(function () {
 "use strict";
-/*global escape, unescape*/
 
 var isNode = typeof process === 'object' &&
              typeof process.versions === 'object' &&
@@ -8,12 +12,12 @@ var isNode = typeof process === 'object' &&
 
 if (isNode) {
   var nodeRequire = require; // Prevent mine.js from seeing this require
-  module.exports = nodeRequire('./bodec-node.js');
+  return nodeRequire('./bodec-node.js');
 }
 else {
 
   // This file must be served with UTF-8 encoding for the utf8 codec to work.
-  module.exports = {
+  return {
     Binary: Uint8Array,
     // Utility functions
     isBinary: isBinary,
@@ -189,11 +193,11 @@ function encodeBase64(raw) {
 }
 
 function decodeUtf8(utf8) {
-  return decodeURIComponent(escape(utf8));
+  return decodeURIComponent(window.escape(utf8));
 }
 
 function encodeUtf8(unicode) {
-  return unescape(encodeURIComponent(unicode));
+  return window.unescape(encodeURIComponent(unicode));
 }
 
 function toRaw(binary, start, end) {
@@ -244,3 +248,5 @@ function fromArray(array, binary, offset) {
   }
   return binary;
 }
+
+});
