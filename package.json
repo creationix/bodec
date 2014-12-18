@@ -2,6 +2,7 @@
   "name": "bodec",
   "version": "0.1.0",
   "main": "bodec.js",
+  "browser": "bodec-browser.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/creationix/bodec.git"

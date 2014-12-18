@@ -1,141 +1,76 @@
-"use strict";
+module.exports = {
+  Binary: Buffer,
+  // Utility functions
+  isBinary: Buffer.isBuffer,
+  create: Buffer,
+  join: Buffer.concat,
 
-var isNode = typeof process === 'object' &&
-             typeof process.versions === 'object' &&
-             process.versions.node &&
-             process.__atom_type !== "renderer";
+  // Binary input and output
+  copy: copy,
+  slice: slice,
 
-if (isNode) {
-  var nodeRequire = require; // Prevent mine.js from seeing this require
-  module.exports = nodeRequire('./bodec-node.js');
-}
-else {
+  // String input and output
+  toRaw: toRaw,
+  fromRaw: fromRaw,
+  toUnicode: toUnicode,
+  fromUnicode: fromUnicode,
+  toHex: toHex,
+  fromHex: fromHex,
+  toBase64: toBase64,
+  fromBase64: fromBase64,
 
-  // This file must be served with UTF-8 encoding for the utf8 codec to work.
-  module.exports = {
-    Binary: Uint8Array,
-    // Utility functions
-    isBinary: isBinary,
-    create: create,
-    join: join,
+  // Array input and output
+  toArray: toArray,
+  fromArray: fromArray,
 
-    // Binary input and output
-    copy: copy,
-    slice: slice,
+  // Raw <-> Hex-encoded codec
+  decodeHex: decodeHex,
+  encodeHex: encodeHex,
 
-    // String input and output
-    toRaw: toRaw,
-    fromRaw: fromRaw,
-    toUnicode: toUnicode,
-    fromUnicode: fromUnicode,
-    toHex: toHex,
-    fromHex: fromHex,
-    toBase64: toBase64,
-    fromBase64: fromBase64,
+  decodeBase64: decodeBase64,
+  encodeBase64: encodeBase64,
 
-    // Array input and output
-    toArray: toArray,
-    fromArray: fromArray,
+  // Unicode <-> Utf8-encoded-raw codec
+  encodeUtf8: encodeUtf8,
+  decodeUtf8: decodeUtf8,
 
-    // Raw <-> Hex-encoded codec
-    decodeHex: decodeHex,
-    encodeHex: encodeHex,
-
-    decodeBase64: decodeBase64,
-    encodeBase64: encodeBase64,
-
-    // Unicode <-> Utf8-encoded-raw codec
-    encodeUtf8: encodeUtf8,
-    decodeUtf8: decodeUtf8,
-
-    // Hex <-> Nibble codec
-    nibbleToCode: nibbleToCode,
-    codeToNibble: codeToNibble
-  };
-}
-
-function isBinary(value) {
-  return value &&
-      typeof value === "object" &&
-      value instanceof Uint8Array || value.constructor.name === "Uint8Array";
-}
-
-function create(length) {
-  return new Uint8Array(length);
-}
-
-function join(chunks) {
-  var length = chunks.length;
-  var total = 0;
-  for (var i = 0; i < length; i++) {
-    total += chunks[i].length;
-  }
-  var binary = create(total);
-  var offset = 0;
-  for (i = 0; i < length; i++) {
-    var chunk = chunks[i];
-    copy(chunk, binary, offset);
-    offset += chunk.length;
-  }
-  return binary;
-}
+  // Hex <-> Nibble codec
+  nibbleToCode: nibbleToCode,
+  codeToNibble: codeToNibble
+};
 
 function slice(binary, start, end) {
-  if (end === undefined) {
-    end = binary.length;
-    if (start === undefined) start = 0;
-  }
-  return binary.subarray(start, end);
+  return binary.slice(start, end);
 }
 
 function copy(source, binary, offset) {
-  var length = source.length;
-  if (offset === undefined) {
-    offset = 0;
-    if (binary === undefined) binary = create(length);
-  }
-  for (var i = 0; i < length; i++) {
-    binary[i + offset] = source[i];
-  }
-  return binary;
+  return source.copy(binary, offset);
 }
 
 // Like slice, but encode as a hex string
 function toHex(binary, start, end) {
-  var hex = "";
-  if (end === undefined) {
-    end = binary.length;
-    if (start === undefined) start = 0;
-  }
-  for (var i = start; i < end; i++) {
-    var byte = binary[i];
-    hex += String.fromCharCode(nibbleToCode(byte >> 4)) +
-           String.fromCharCode(nibbleToCode(byte & 0xf));
-  }
-  return hex;
+  return binary.toString('hex', start, end);
 }
 
 // Like copy, but decode from a hex string
 function fromHex(hex, binary, offset) {
-  var length = hex.length / 2;
-  if (offset === undefined) {
-    offset = 0;
-    if (binary === undefined) binary = create(length);
+  if (binary) {
+    binary.write(hex, offset, "hex");
+    return binary;
   }
-  var j = 0;
-  for (var i = 0; i < length; i++) {
-    binary[offset + i] = (codeToNibble(hex.charCodeAt(j++)) << 4)
-                       |  codeToNibble(hex.charCodeAt(j++));
-  }
-  return binary;
+  return new Buffer(hex, 'hex');
 }
 
 function toBase64(binary, start, end) {
-  return btoa(toRaw(binary, start, end));
+  return binary.toString('base64', start, end);
 }
 
 function fromBase64(base64, binary, offset) {
-  return fromRaw(atob(base64), binary, offset);
+  if (binary) {
+    binary.write(base64, offset, 'base64');
+    return binary;
+  }
+  return new Buffer(base64, 'base64');
 }
 
 function nibbleToCode(nibble) {
@@ -149,11 +84,15 @@ function codeToNibble(code) {
 }
 
 function toUnicode(binary, start, end) {
-  return decodeUtf8(toRaw(binary, start, end));
+  return binary.toString('utf8', start, end);
 }
 
 function fromUnicode(unicode, binary, offset) {
-  return fromRaw(encodeUtf8(unicode), binary, offset);
+  if (binary) {
+    binary.write(unicode, offset, 'utf8');
+    return binary;
+  }
+  return new Buffer(unicode, 'utf8');
 }
 
 function decodeHex(hex) {
@@ -180,43 +119,31 @@ function encodeHex(raw) {
 }
 
 function decodeBase64(base64) {
-  return atob(base64);
+  return (new Buffer(base64, 'base64')).toString('binary');
 }
 
 function encodeBase64(raw) {
-  return btoa(raw);
+  return (new Buffer(raw, 'binary')).toString('base64');
 }
 
 function decodeUtf8(utf8) {
-  return decodeURIComponent(window.escape(utf8));
+  return (new Buffer(utf8, 'binary')).toString('utf8');
 }
 
 function encodeUtf8(unicode) {
-  return window.unescape(encodeURIComponent(unicode));
+  return (new Buffer(unicode, 'utf8')).toString('binary');
 }
 
 function toRaw(binary, start, end) {
-  var raw = "";
-  if (end === undefined) {
-    end = binary.length;
-    if (start === undefined) start = 0;
-  }
-  for (var i = start; i < end; i++) {
-    raw += String.fromCharCode(binary[i]);
-  }
-  return raw;
+  return binary.toString('binary', start, end);
 }
 
 function fromRaw(raw, binary, offset) {
-  var length = raw.length;
-  if (offset === undefined) {
-    offset = 0;
-    if (binary === undefined) binary = create(length);
+  if (binary) {
+    binary.write(raw, offset, 'binary');
+    return binary;
   }
-  for (var i = 0; i < length; i++) {
-    binary[offset + i] = raw.charCodeAt(i);
-  }
-  return binary;
+  return new Buffer(raw, 'binary');
 }
 
 function toArray(binary, start, end) {
@@ -233,10 +160,10 @@ function toArray(binary, start, end) {
 }
 
 function fromArray(array, binary, offset) {
+  if (!binary) return new Buffer(array);
   var length = array.length;
   if (offset === undefined) {
     offset = 0;
-    if (binary === undefined) binary = create(length);
   }
   for (var i = 0; i < length; i++) {
     binary[offset + i] = array[i];
