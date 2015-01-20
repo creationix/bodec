@@ -1,6 +1,6 @@
 {
   "name": "bodec",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "bodec.js",
   "browser": "bodec-browser.js",
   "repository": {
