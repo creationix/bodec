@@ -18,6 +18,8 @@ module.exports = {
   fromHex: fromHex,
   toBase64: toBase64,
   fromBase64: fromBase64,
+  toString: toString,
+  fromString: fromString,
 
   // Array input and output
   toArray: toArray,
@@ -169,4 +171,26 @@ function fromArray(array, binary, offset) {
     binary[offset + i] = array[i];
   }
   return binary;
+}
+
+var toStringCoders = {
+  base64: toBase64,
+  hex: toHex,
+  utf8: toUnicode,
+  'utf-8': toUnicode
+};
+
+function toString(binary, encoding) {
+  return ((encoding && toStringCoders[encoding]) || toStringCoders.utf8)(binary);
+}
+
+var fromStringCoders = {
+  base64: fromBase64,
+  hex: fromHex,
+  utf8: fromUnicode,
+  'utf-8': fromUnicode
+};
+
+function fromString(string, encoding) {
+  return ((encoding && fromStringCoders[encoding]) || fromStringCoders.utf8)(string);
 }
